@@ -234,14 +234,12 @@ class PlayerControl : IController
 
         List<BattleMenu> BattleMenu = new();
 
-
         if (EnemyList.Characters.Count > 1)
         {
             for (int i = 0; i < EnemyList.Characters.Count; i++)
                 BattleMenu.Add(new BattleMenu($"Attack ({character.Attack}) -> {EnemyList.Characters[i]}", new Attack(character.Attack, EnemyList.Characters[i])));
         }
         else BattleMenu.Add(new BattleMenu($"Attack ({character.Attack}) -> {EnemyList.Characters[0]}", new Attack(character.Attack, EnemyList.Characters[0])));
-
 
         BattleMenu.Add(new BattleMenu("Do Nothing", new DoNothing()));
 
