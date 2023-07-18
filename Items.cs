@@ -2,7 +2,7 @@
 {
     string Name { get; }
     int Count { get; set; }
-    void UseItem(Fight fight, Character character);
+    string UseItem(Fight fight, Character character);
 }
 
 class HealthPotion : IItem
@@ -12,31 +12,35 @@ class HealthPotion : IItem
 
     public HealthPotion(int count) { Count = count; }
 
-    public void UseItem(Fight fight, Character character)
+    public string UseItem(Fight fight, Character character)
     {
-        fight.BattleStatus(character);
+        string textHolder = "";
         if (character.Health + 10 <= character.MaxHealth)
-            Console.WriteLine($"{character.Name} was healed for 10 HP!");
-        Console.WriteLine($"{character.Name} was healed for {character.MaxHealth - character.Health} HP!");
+            textHolder += $"{character.Name} was healed for 10 HP!\r\n";
+        else textHolder += $"{character.Name} was healed for {character.MaxHealth - character.Health} HP!";
         character.Health += 10;
-        Thread.Sleep(2500);
+        return textHolder;
     }
 }
 
-class HealthPotion2 : IItem
+class Grenade : IItem
 {
-    public string Name => "Health PotionBUTWRONG";
+    public string Name => "Grenade";
     public int Count { get; set; }
 
-    public HealthPotion2(int count) { Count = count; }
+    public Grenade(int count) { Count = count; }
 
-    public void UseItem(Fight fight, Character character)
+    public string UseItem(Fight fight, Character character)
     {
-        fight.BattleStatus(character);
-        if (character.Health + 10 <= character.MaxHealth)
-            Console.WriteLine($"{character.Name} was healed for 10 HP!");
-        Console.WriteLine($"{character.Name} was healed for {character.MaxHealth - character.Health} HP!");
-        character.Health += 10;
-        Thread.Sleep(2500);
+        Random random = new();
+        string textHolder = "The grenade explodes at their feet!\r\n\r\n";
+        foreach (Character _target in fight.GetEnemyPartyFor(character).Characters)
+        {
+            int damage = random.Next(4, 6);
+            _target.Health -= damage;
+            textHolder += $"{_target.Name} takes {damage} points of damage!\r\n";
+        }
+        return textHolder;
     }
 }
+

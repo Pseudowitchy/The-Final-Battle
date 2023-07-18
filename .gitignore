@@ -1,0 +1,31 @@
+
+.vs/ProjectEvaluation/the final battle.metadata.v6.1
+.vs/ProjectEvaluation/the final battle.projects.v6.1
+.vs/The Final Battle/FileContentIndex/4ecb7071-23dd-442e-9788-ad6de5cad80c.vsidx
+.vs/The Final Battle/FileContentIndex/83c7a4c5-5f7b-403c-b149-d7a74fd2a729.vsidx
+.vs/The Final Battle/FileContentIndex/e0da5d42-acd3-4a85-a0e4-23f588b64e8e.vsidx
+.vs/The Final Battle/FileContentIndex/e8d1d77d-c8d1-4f7f-a8fe-3a5d9c0fef14.vsidx
+.vs/The Final Battle/FileContentIndex/read.lock
+.vs/The Final Battle/v17/.futdcache.v2
+obj/Debug/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs
+obj/Debug/net6.0/The Final Battle.AssemblyInfo.cs
+obj/Debug/net6.0/The Final Battle.AssemblyInfoInputs.cache
+obj/Debug/net6.0/The Final Battle.assets.cache
+obj/Debug/net6.0/The Final Battle.csproj.AssemblyReference.cache
+obj/Debug/net6.0/The Final Battle.GeneratedMSBuildEditorConfig.editorconfig
+obj/Debug/net6.0/The Final Battle.GlobalUsings.g.cs
+obj/project.assets.json
+obj/project.nuget.cache
+obj/The Final Battle.csproj.nuget.dgspec.json
+obj/The Final Battle.csproj.nuget.g.props
+obj/The Final Battle.csproj.nuget.g.targets
+*.vsidx
+*.v2
+.vs/The Final Battle/v17/.suo
+*.json
+*.dll
+*.exe
+*.pdb
+*.BuildWithSkipAnalyzers
+*.cache
+*.txt

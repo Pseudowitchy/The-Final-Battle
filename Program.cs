@@ -1,8 +1,11 @@
-﻿Console.WriteLine("What is your name? ");
+﻿Console.Write("\r\nWhat is your name? ");
 string name = Console.ReadLine()!.ToUpper();
+Console.Clear();
+Console.WriteLine("\r\n");
 
-IController team1;
+IController team1; 
 IController team2;
+
 
 while (true)
 {
@@ -19,12 +22,105 @@ while (true)
     else { Console.Clear(); Console.WriteLine("Invalid entry, please try again. \r\n"); }
 }
 
+Console.Clear();
 Party heroes = new(team1);
-heroes.Characters.Add(new TrueProgrammer(name));
+
 heroes.Items.Add(new HealthPotion(3));
+heroes.Items.Add(new Grenade(1));
 
+while (heroes.Characters.Count < 3)
+{
+        Console.Clear();
+    string textHolder = "";
+    if (heroes.Characters.Count == 1) heroes.Characters.Add(new TrueProgrammer(name));
+    if (textHolder != null) { Console.WriteLine(textHolder); }
+    Console.WriteLine("\r\nWho would you like to take with you? (Two additional characters)");
+    Console.WriteLine("  1 - Vin Fletcher");
+    Console.WriteLine("  2 - Mylara & Skorin");
+    Console.WriteLine("  3 - Gambler");
+    Console.WriteLine("  4 - Guardian");
+    int reply = Convert.ToInt32(Console.ReadLine());
 
-List<Party> monsterTeams = new() { MonsterTeam1(team2), MonsterTeam2(team2), MonsterTeam3(team2) };
+    if (reply == 1) heroes.Characters.Add(new VinFletcher());
+    else if (reply == 2) heroes.Characters.Add(new MylaraSkorin());
+    else if (reply == 3) heroes.Characters.Add(new Gambler());
+    else if (reply == 4) heroes.Characters.Add(new Guardian());
+    else
+    {
+        textHolder = "Invalid entry, try again.";
+    }
+}
+
+List<Party> monsterTeams = new() { MonsterTeam1(team2), MonsterTeam2(team2), MonsterTeam3(team2), MonsterTeam4(team2), MonsterTeam5(team2), MonsterTeam6(team2), MonsterTeam7(team2) };
+
+// Monster teams, each one is a separate fight in the battle
+Party MonsterTeam1(IController controller)
+{
+    Party monsters = new(controller);
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[0].EquippedGear = new Dagger(1);
+    monsters.Items.Add(new HealthPotion(1));
+    return monsters;
+}
+Party MonsterTeam2(IController controller)
+{
+    Party monsters = new(controller);
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters.Add(new Skeleton());
+    monsters.Items.Add(new HealthPotion(1));
+    monsters.Gear.Add(new Dagger(2));
+    return monsters;
+}
+Party MonsterTeam3(IController controller)
+{
+    Party monsters = new(controller);
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[0].EquippedGear = new Dagger(1);
+    monsters.Characters.Add(new StoneAmarok());
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[2].EquippedGear = new Dagger(1);
+    monsters.Items.Add(new HealthPotion(2));
+    return monsters;
+}
+Party MonsterTeam4(IController controller)
+{
+    Party monsters = new(controller);
+    monsters.Characters.Add(new StoneAmarok());
+    monsters.Characters.Add(new StoneAmarok());
+    monsters.Characters.Add(new StoneAmarok());
+    monsters.Items.Add(new HealthPotion(1));
+    return monsters;
+}
+Party MonsterTeam5(IController controller)
+{
+    Party monsters = new(controller);
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[0].EquippedGear = new Dagger(1);
+    monsters.Characters.Add(new SkeletonKnight());
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[2].EquippedGear = new Dagger(1);
+    return monsters;
+}
+Party MonsterTeam6(IController controller)
+{
+    Party monsters = new(controller);
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[0].EquippedGear = new Sword(1);
+    monsters.Characters.Add(new SkeletonArcher());
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[2].EquippedGear = new Sword(1);
+    monsters.Characters.Add(new SkeletonArcher());
+    monsters.Characters.Add(new Skeleton());
+    monsters.Characters[4].EquippedGear = new Sword(1);
+    return monsters;
+}
+Party MonsterTeam7(IController controller)
+{
+    Party monsters = new(controller);
+    monsters.Characters.Add(new UncodedOne());
+    monsters.Items.Add(new HealthPotion(1));
+    return monsters;
+}
 
 for (int fightNumber = 0; fightNumber < monsterTeams.Count; fightNumber++)
 {
@@ -35,94 +131,9 @@ for (int fightNumber = 0; fightNumber < monsterTeams.Count; fightNumber++)
     if (heroes.Characters.Count == 0) break;
 }
 
-Console.WriteLine("\r\n-------------------------------------------------------------------\r\n");
 if (heroes.Characters.Count > 0) Console.WriteLine("You have won the battle! The Uncoded One has been defeated!");
 else Console.WriteLine("You have been defeated in battle. The Uncoded One's forces have prevailed.");
-
-// Monster teams, each one is a separate fight in the battle
-Party MonsterTeam1(IController controller)
-{
-    Party monsters = new(controller);
-    monsters.Characters.Add(new Skeleton());
-    monsters.Items.Add(new HealthPotion(1));
-    return monsters;
-}
-Party MonsterTeam2(IController controller)
-{
-    Party monsters = new(controller);
-    monsters.Characters.Add(new Skeleton());
-    monsters.Characters.Add(new Skeleton());
-    monsters.Items.Add(new HealthPotion(1));
-    return monsters;
-}
-Party MonsterTeam3(IController controller)
-{
-    Party monsters = new(controller);
-    monsters.Characters.Add(new UncodedOne());
-    monsters.Items.Add(new HealthPotion(1));
-    return monsters;
-}
-
-class Fight
-{
-    public Party Heroes;
-    public Party Monsters;
-    public bool FightActive => Heroes.Characters.Count == 0 || Monsters.Characters.Count == 0;
-
-    public Fight(Party heroes, Party monsters)
-    {
-        Heroes = heroes;
-        Monsters = monsters;
-    }
-    public void Play()
-    {
-        while (!FightActive)
-        {
-            foreach (Party party in new[] { Heroes, Monsters })
-            {
-                foreach (Character character in party.Characters)
-                {
-                    Console.WriteLine();
-                    BattleStatus(character);
-                    Console.WriteLine($"It is {character.Name}'s turn...");
-                    party.Controller.ActionChoice(this, character).Run(this, character);
-                    if (Monsters.Characters.Count == 0)
-                    {
-                        Console.WriteLine("You have won this battle! Press any key to continue!");
-                        Console.ReadKey();
-                    }
-                    if (FightActive) break;
-                }
-                if (FightActive) break;
-            }
-        }
-    }
-
-    public void BattleStatus(Character characterTurn)
-    {
-        Console.Clear();
-        Console.WriteLine("\r\n = Allied Forces =====================================================================================================");
-        for (int i = 0; i < Heroes.Characters.Count; i++)
-        {
-            if (characterTurn == Heroes.Characters[i])
-                Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"  {Heroes.Characters[i].Name} ( {Heroes.Characters[i].Health} / {Heroes.Characters[i].MaxHealth} )");
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-        Console.WriteLine(" -------------------------------------------------------- VS ------------------------------------------ Enemy Forces -");
-        for (int i = 0; i < Monsters.Characters.Count; i++)
-        {
-            if (characterTurn == Monsters.Characters[i])
-                Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"{Monsters.Characters[i].Name} ( {Monsters.Characters[i].Health} / {Monsters.Characters[i].MaxHealth} )".PadLeft(117));
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-        Console.WriteLine(" =====================================================================================================================\r\n");
-    }
-
-    public Party GetPartyFor(Character character) => Heroes.Characters.Contains(character) ? Heroes : Monsters;
-    public Party GetEnemyPartyFor(Character character) => Heroes.Characters.Contains(character) ? Monsters : Heroes;
-}
+Console.ReadKey();
 
 // Party set up
 class Party
@@ -130,6 +141,7 @@ class Party
     public IController Controller;
     public List<Character> Characters { get; } = new();
     public List<IItem> Items { get; } = new();
+    public List<IGear> Gear { get; } = new();
 
     public Party(IController controller) { Controller = controller; }
 }
