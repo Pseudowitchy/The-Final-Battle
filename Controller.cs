@@ -93,16 +93,29 @@ class PlayerControl : IController
     public IAction ActionChoice(Fight fight, Character character)
     {
         List<BattleMenu> BattleMenu = BuildMenu(fight, character);
+        string textHolder = "";
 
-        for (int i = 0; i < BattleMenu.Count; i++)
-            Console.WriteLine($"{i + 1} - {BattleMenu[i].Description}");
-        Console.Write("What would you like to do? ");
-        string reply = Console.ReadLine() ?? "";
-        try
+        while (true)
         {
-            return BattleMenu[Convert.ToInt32(reply) - 1].Action!;
+            Console.Clear();
+            fight.BattleStatus(character);
+            if (textHolder != "")
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(textHolder);
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            else Console.WriteLine();
+            for (int i = 0; i < BattleMenu.Count; i++)
+                Console.WriteLine($"{i + 1} - {BattleMenu[i].Description}");
+            Console.Write("What would you like to do? ");
+            string reply = Console.ReadLine() ?? "";
+            try
+            {
+                return BattleMenu[Convert.ToInt32(reply) - 1].Action!;
+            }
+            catch { textHolder = "--> Invalid Input, please try again. <--"; }
         }
-        catch { return new DoNothing(); }
     }
 }
 record BattleMenu(string Description, IAction? Action)

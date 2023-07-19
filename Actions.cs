@@ -17,44 +17,49 @@ class Attack : IAction
 
     public void Run(Fight fight, Character character)
     {
+        if (_attack.Name == "CANNONFIRE") { _attack.TurnCount++; }
         Random random = new();
+        string textHolder;
+        textHolder = $"{character.Name} used {_attack.Name} on {_target.Name}.\r\n";
         if (random.NextDouble() < _attack.HitChance)
         {
-            string textHolder = $"{character.Name} used {_attack.Name} on {_target.Name}.\r\n";
-            
             int damageLock = _attack.Damage;
             if (_target.DamageReduction != null)
             {
                 if (_attack.DamageType == _target.DamageReduction.ResistantTo)
                 {
-                    textHolder += $"{_target.DamageReduction.Name} reduced the attack damage by {Math.Clamp(_target.DamageReduction.Value,0,damageLock)}.";
+                    textHolder += $"{_target.DamageReduction.Name} reduced the attack damage by {Math.Clamp(_target.DamageReduction.Value, 0, damageLock)}.";
                     damageLock -= _target.DamageReduction.Value;
                 }
             }
             _target.Health -= damageLock;
 
-            fight.BattleStatus(character);
-            Console.WriteLine(textHolder);
-
             if (!_target.Alive)
             {
-                Console.WriteLine($"The {_attack.Name} dealt {Math.Clamp(damageLock,0,100)} damage to {_target.Name}. {_target.Name} has been defeated!");
+                textHolder += $"\r\nThe {_attack.Name} dealt {Math.Clamp(damageLock, 0, 100)} damage to {_target.Name}. {_target.Name} has been defeated!\r\n";
                 if (_target.EquippedGear != null)
                 {
-                    Console.WriteLine($"A {_target.EquippedGear} has been taken from {_target.Name}'s body!");
+                    textHolder += $"\r\nA {_target.EquippedGear} has been taken from {_target.Name}'s body!";
                     bool gearExistsInList = false;
-                    
-                        foreach (IGear gear in fight.GetPartyFor(character).Gear)
-                        {
-                            if (_target.EquippedGear.GetType() == gear.GetType()) { gear.Count++; gearExistsInList = true; }
-                        }
+
+                    foreach (IGear gear in fight.GetPartyFor(character).Gear)
+                    {
+                        if (_target.EquippedGear.GetType() == gear.GetType()) { gear.Count++; gearExistsInList = true; }
+                    }
                     if (gearExistsInList == false) fight.GetPartyFor(character).Gear.Add(_target.EquippedGear);
                 }
                 fight.GetPartyFor(_target).Characters.Remove(_target);
             }
-            else Console.WriteLine($"The {_attack.Name} dealt {Math.Clamp(damageLock, 0, 100)} damage to {_target.Name}!");
+            else textHolder += $"\r\nThe {_attack.Name} dealt {Math.Clamp(damageLock, 0, 100)} damage to {_target.Name}!";
         }
-        else Console.WriteLine($"{character.Name} MISSED!");
+        else
+        {
+            textHolder += $"{character.Name} MISSED!";
+        }
+        fight.BattleStatus(character);
+        Console.WriteLine();
+        Console.WriteLine(textHolder);
+
         Thread.Sleep(2000);
     }
 }
@@ -92,12 +97,16 @@ class Equip : IAction
         if (character.EquippedGear != null)
         {
             _gearOld = character.EquippedGear;
-            if (GearList.Contains(_gearOld))
-                _gearOld.Count++;
-            else GearList.Add(_gearOld);
-            textHolder = $"{character.Name} has equipped a {_gear.Name}! The {_gearOld} has been returned to their inventory!";
+            bool gearUnequipped = false;
+            for (int i = 0; i < GearList.Count; i++)
+            {
+                if (_gearOld.GetType() == GearList[i].GetType()) { GearList[i].Count++; gearUnequipped = true; }
+            }
+            if (!gearUnequipped)
+                GearList.Add(_gearOld);
+            textHolder = $"\r\n{character.Name} has equipped a {_gear.Name}! The {_gearOld} has been returned to their inventory!";
         }
-        else textHolder = $"{character.Name} has equipped a {_gear.Name}!";
+        else textHolder = $"\r\n{character.Name} has equipped a {_gear.Name}!";
         character.EquippedGear = _gear;
         fight.BattleStatus(character);
         Console.WriteLine(textHolder);

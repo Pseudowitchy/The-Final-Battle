@@ -48,7 +48,7 @@ class CannonOfConsolas : IGear
     public string Name => "Cannon of Consolas";
     public int Count { get; set; }
     public IAttack Attack => new CannonOfConsolasAttack();
-    public int WeaponTier => 3;
+    public int WeaponTier => 10;
 
     public CannonOfConsolas(int count)
     {

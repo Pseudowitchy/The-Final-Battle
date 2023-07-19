@@ -30,7 +30,7 @@ heroes.Items.Add(new Grenade(1));
 
 while (heroes.Characters.Count < 3)
 {
-        Console.Clear();
+    Console.Clear();
     string textHolder = "";
     if (heroes.Characters.Count == 1) heroes.Characters.Add(new TrueProgrammer(name));
     if (textHolder != null) { Console.WriteLine(textHolder); }
@@ -39,16 +39,23 @@ while (heroes.Characters.Count < 3)
     Console.WriteLine("  2 - Mylara & Skorin");
     Console.WriteLine("  3 - Gambler");
     Console.WriteLine("  4 - Guardian");
-    int reply = Convert.ToInt32(Console.ReadLine());
-
-    if (reply == 1) heroes.Characters.Add(new VinFletcher());
-    else if (reply == 2) heroes.Characters.Add(new MylaraSkorin());
-    else if (reply == 3) heroes.Characters.Add(new Gambler());
-    else if (reply == 4) heroes.Characters.Add(new Guardian());
-    else
+    Console.WriteLine("  0 - Skip Selection");
+    try
     {
-        textHolder = "Invalid entry, try again.";
+        int reply = Convert.ToInt32(Console.ReadLine());
+
+        if (reply == 1) heroes.Characters.Add(new VinFletcher());
+        else if (reply == 2) heroes.Characters.Add(new MylaraSkorin());
+        else if (reply == 3) heroes.Characters.Add(new Corsair());
+        else if (reply == 4) heroes.Characters.Add(new Guardian());
+        else if (reply == 0)
+        {
+            if (heroes.Characters.Count == 0) heroes.Characters.Add(new TrueProgrammer(name));
+            break;
+        }
+        else { textHolder = "Invalid entry, try again."; }
     }
+    catch { }
 }
 
 List<Party> monsterTeams = new() { MonsterTeam1(team2), MonsterTeam2(team2), MonsterTeam3(team2), MonsterTeam4(team2), MonsterTeam5(team2), MonsterTeam6(team2), MonsterTeam7(team2) };
@@ -122,13 +129,15 @@ Party MonsterTeam7(IController controller)
     return monsters;
 }
 
+int Battle = 1;
 for (int fightNumber = 0; fightNumber < monsterTeams.Count; fightNumber++)
 {
     Party monsters = monsterTeams[fightNumber];
-    Fight fight = new(heroes, monsters);
+    Fight fight = new(heroes, monsters, Battle);
     fight.Play();
 
     if (heroes.Characters.Count == 0) break;
+    Battle++;
 }
 
 if (heroes.Characters.Count > 0) Console.WriteLine("You have won the battle! The Uncoded One has been defeated!");

@@ -57,15 +57,15 @@ class MylaraSkorin : Character
 
     public MylaraSkorin() : base(15) { EquippedGear = new CannonOfConsolas(1); }
 }
-class Gambler : Character
+class Corsair : Character
 {
-    public override string Name => "GAMBLER";
+    public override string Name => "CORSAIR";
     public override IAttack Attack => new Punch();
     public override IGear? EquippedGear { get; set; }
     public override IDamageResistance? DamageReduction { get; }
     public override int AttackTier => 1;
 
-    public Gambler() : base(10) { EquippedGear = new Hexgun(1); }
+    public Corsair() : base(10) { EquippedGear = new Hexgun(1); }
 }
 class Guardian : Character
 {

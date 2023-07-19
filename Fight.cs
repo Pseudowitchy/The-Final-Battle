@@ -2,14 +2,15 @@
 {
     public Party Heroes;
     public Party Monsters;
-    public int Turn = 0;
-    public int Battle = 1;
+    public int Battle;
+    public int Turn = 1;
     public bool FightOver => Heroes.Characters.Count == 0 || Monsters.Characters.Count == 0;
 
-    public Fight(Party heroes, Party monsters)
+    public Fight(Party heroes, Party monsters, int battle)
     {
         Heroes = heroes;
         Monsters = monsters;
+        Battle = battle;
     }
     public void Play()
     {
@@ -52,44 +53,111 @@
                     }
                     if (FightOver)
                     {
-                        Turn = 0;
-                        Battle++;
                         break;
                     }
                 }
                 if (FightOver)
                 {
-                    Turn = 0;
-                    Battle++;
                     break;
                 }
+        
             }
+            Turn++;
         }
     }
     public void BattleStatus(Character characterTurn)
     {
         Console.Clear();
-        if (Battle == 6) { Console.WriteLine("~ RATTLE 'EM BOYS ~"); }
-        else Console.WriteLine();
-        Console.WriteLine(" = Allied Forces =====================================================================================================");
-        for (int i = 0; i < Heroes.Characters.Count; i++)
+        if (Battle == 6)
         {
-            if (characterTurn == Heroes.Characters[i])
-                Console.ForegroundColor = ConsoleColor.Blue;
-            if (Heroes.Characters[i].EquippedGear != null) { Console.WriteLine($"  {Heroes.Characters[i].Name} ( {Heroes.Characters[i].Health} / {Heroes.Characters[i].MaxHealth} )  -  Equipped Weapon: {Heroes.Characters[i].EquippedGear!.Name}"); }
-            else Console.WriteLine($"  {Heroes.Characters[i].Name} ( {Heroes.Characters[i].Health} / {Heroes.Characters[i].MaxHealth} )");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("~ RATTLE 'EM BOYS! ~".PadLeft(65));
             Console.ForegroundColor = ConsoleColor.White;
         }
-        Console.WriteLine(" -------------------------------------------------------- VS ------------------------------------------ Enemy Forces -");
-        for (int i = 0; i < Monsters.Characters.Count; i++)
+
+        ConsoleColor healthColor;
+        string healthDisplay;
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(" = [Allied Forces] ===================================================================================================");
+        Console.ForegroundColor = ConsoleColor.White;
+
+        for (int i = 0; i < Heroes.Characters.Count; i++) // name -> health -> gear
         {
-            if (characterTurn == Monsters.Characters[i])
-                Console.ForegroundColor = ConsoleColor.Red;
-            if (Monsters.Characters[i].EquippedGear != null) { Console.WriteLine($"Equipped Weapon: {Monsters.Characters[i].EquippedGear!.Name}  -  {Monsters.Characters[i].Name} ( {Monsters.Characters[i].Health} / {Monsters.Characters[i].MaxHealth} )".PadLeft(117)); }
-            else Console.WriteLine($"{Monsters.Characters[i].Name} ( {Monsters.Characters[i].Health} / {Monsters.Characters[i].MaxHealth} )".PadLeft(117));
+            string nameDisplay = $"{Heroes.Characters[i].Name} ";
+            if (Heroes.Characters[i].Health * 2 <= Heroes.Characters[i].MaxHealth)
+            {
+                if (Heroes.Characters[i].Health * 4 <= Heroes.Characters[i].MaxHealth + 1) { healthColor = ConsoleColor.Red; }
+                else { healthColor = ConsoleColor.DarkYellow; }
+                healthDisplay = $"(! {Heroes.Characters[i].Health} / {Heroes.Characters[i].MaxHealth} !)";
+            }
+            else { healthDisplay = $"(  {Heroes.Characters[i].Health} / {Heroes.Characters[i].MaxHealth}  )"; healthColor = ConsoleColor.White; }
+
+            string gearDisplay;
+            if (Heroes.Characters[i].EquippedGear != null)
+                gearDisplay = $"<--  Equipped Weapon: ";
+            else { gearDisplay = ""; }
+
+            if (characterTurn == Heroes.Characters[i]) { Console.ForegroundColor = ConsoleColor.Magenta; }
+            Console.Write("  " + nameDisplay);
+
+            Console.ForegroundColor = healthColor;
+            Console.Write(healthDisplay);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.Write(gearDisplay.PadLeft(61 - nameDisplay.Length - healthDisplay.Length));
+            if (Heroes.Characters[i].EquippedGear != null) Console.WriteLine(Heroes.Characters[i].EquippedGear!.Name);
+            else Console.WriteLine();
+        }
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(" ------------------------------------------------------  VS  ---------------------------------------- [Enemy Forces] -");
+        Console.ForegroundColor = ConsoleColor.White;
+
+        for (int i = 0; i < Monsters.Characters.Count; i++) // gear -> health -> name
+        {
+            string gearDisplay;
+            int weaponNameLength = 0;
+            if (Monsters.Characters[i].EquippedGear != null)
+            {
+                gearDisplay = $"Equipped Weapon: {Monsters.Characters[i].EquippedGear!.Name}";
+                weaponNameLength = Monsters.Characters[i].EquippedGear!.Name.Length;
+            }
+            else { gearDisplay = ""; }
+            if (Monsters.Characters[i].Health * 2 <= Monsters.Characters[i].MaxHealth + 1)
+            {
+                if (Monsters.Characters[i].Health * 4 <= Monsters.Characters[i].MaxHealth) { healthColor = ConsoleColor.Red; }
+                else { healthColor = ConsoleColor.DarkYellow; }
+                healthDisplay = $"(! {Monsters.Characters[i].Health} / {Monsters.Characters[i].MaxHealth} !)";
+            }
+            else { healthDisplay = $"(  {Monsters.Characters[i].Health} / {Monsters.Characters[i].MaxHealth}  )"; healthColor = ConsoleColor.White; }
+            string nameDisplay = $" {Monsters.Characters[i].Name}";
+
+            if (weaponNameLength == 6) { Console.Write(gearDisplay.PadLeft(69)); Console.Write("  -->"); }
+            else if (weaponNameLength < 6 && weaponNameLength > 0)
+            {
+                Console.Write(gearDisplay.PadLeft(73 - weaponNameLength));
+                for (int x = 0; x < 6 - weaponNameLength; x++)
+                    Console.Write(" ");
+                Console.Write("  -->");
+            }
+            else if (weaponNameLength > 6) { Console.Write(gearDisplay.PadLeft(68 - (Math.Abs(6 - weaponNameLength)))); }
+            else if (weaponNameLength == 0) { Console.Write(gearDisplay.PadLeft(74)); }
+
+            Console.ForegroundColor = healthColor;
+
+            if (weaponNameLength < 6) { Console.Write(healthDisplay.PadLeft(29 - ((6 - weaponNameLength) * 2))); }
+            else Console.Write(healthDisplay.PadLeft(54 - healthDisplay.Length - nameDisplay.Length));
+            Console.ForegroundColor = ConsoleColor.White;
+
+            if (characterTurn == Monsters.Characters[i]) { Console.ForegroundColor = ConsoleColor.Magenta; }
+            Console.WriteLine(nameDisplay);
             Console.ForegroundColor = ConsoleColor.White;
         }
-        Console.WriteLine(" =====================================================================================================================\r\n");
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(" =====================================================================================================================");
+        Console.ForegroundColor = ConsoleColor.White;
     }
 
     public Party GetPartyFor(Character character) => Heroes.Characters.Contains(character) ? Heroes : Monsters;
