@@ -60,7 +60,7 @@ class Attack : IAction
         Console.WriteLine();
         Console.WriteLine(textHolder);
 
-        Thread.Sleep(2000);
+        fight.Pause();
     }
 }
 
@@ -79,7 +79,7 @@ class UseItem : IAction
         _item.Count--;
         if (_item.Count == 0) { fight.GetPartyFor(character).Items.Remove(_item); }
 
-        Thread.Sleep(2000);
+        fight.Pause();
     }
 }
 
@@ -113,11 +113,13 @@ class Equip : IAction
         _gear.Count--;
         if (_gear.Count == 0) fight.GetPartyFor(character).Gear.Remove(_gear);
 
-        Thread.Sleep(2000);
+        fight.Pause();
     }
 }
 
 class DoNothing : IAction
 {
-    public void Run(Fight fight, Character character) { Console.WriteLine($"{character.Name} did nothing."); Thread.Sleep(2000); }
+    public void Run(Fight fight, Character character) { Console.WriteLine($"{character.Name} did nothing."); fight.Pause();
+        ;
+    }
 }

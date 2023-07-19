@@ -3,17 +3,24 @@
     public Party Heroes;
     public Party Monsters;
     public int Battle;
+    public string GameMode;
     public int Turn = 1;
     public bool FightOver => Heroes.Characters.Count == 0 || Monsters.Characters.Count == 0;
 
-    public Fight(Party heroes, Party monsters, int battle)
+    public Fight(Party heroes, Party monsters, int battle, string gameMode)
     {
         Heroes = heroes;
         Monsters = monsters;
         Battle = battle;
+        GameMode = gameMode;
     }
     public void Play()
     {
+        BattleStatus(Heroes.Characters[0]);
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\r\n                          You have encounted a new group of enemies! Prepare yourself for battle!");
+        Console.ForegroundColor = ConsoleColor.White;
+        Pause();
         while (!FightOver)
         {
             foreach (Party party in new[] { Heroes, Monsters })
@@ -26,6 +33,7 @@
                     party.Controller.ActionChoice(this, character).Run(this, character);
                     if (Monsters.Characters.Count == 0)
                     {
+                        Console.WriteLine("You have won this battle!");
                         bool itemAdded = false;
                         foreach (IItem enemyItem in Monsters.Items)
                         {
@@ -48,8 +56,7 @@
                             }
                             if (gearAdded == false) { Heroes.Gear.Add(enemyGear); }
                         }
-                        Console.WriteLine("You have won this battle! Press any key to continue!");
-                        Console.ReadKey();
+                        Pause();
                     }
                     if (FightOver)
                     {
@@ -71,9 +78,10 @@
         if (Battle == 6)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("~ RATTLE 'EM BOYS! ~".PadLeft(65));
+            Console.WriteLine("~ RATTLE 'EM BOYS! ~".PadLeft(67));
             Console.ForegroundColor = ConsoleColor.White;
         }
+        else { Console.WriteLine(); }
 
         ConsoleColor healthColor;
         string healthDisplay;
@@ -142,10 +150,10 @@
                 Console.Write("  -->");
             }
             else if (weaponNameLength > 6) { Console.Write(gearDisplay.PadLeft(68 - (Math.Abs(6 - weaponNameLength)))); }
-            else if (weaponNameLength == 0) { Console.Write(gearDisplay.PadLeft(74)); }
+            else if (weaponNameLength == 0) { Console.Write(gearDisplay.PadLeft(111 - healthDisplay.Length - nameDisplay.Length)); }
+
 
             Console.ForegroundColor = healthColor;
-
             if (weaponNameLength < 6) { Console.Write(healthDisplay.PadLeft(29 - ((6 - weaponNameLength) * 2))); }
             else Console.Write(healthDisplay.PadLeft(54 - healthDisplay.Length - nameDisplay.Length));
             Console.ForegroundColor = ConsoleColor.White;
@@ -158,6 +166,18 @@
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(" =====================================================================================================================");
         Console.ForegroundColor = ConsoleColor.White;
+    }
+
+    public void Pause()
+    {
+
+        if (GameMode is "PVC" or "PVP")
+        {
+            Console.ForegroundColor= ConsoleColor.Green;
+            Console.WriteLine("                                             Press Any Key to Continue!");
+            Console.ForegroundColor= ConsoleColor.White;
+            Console.ReadKey(); }
+        else { Thread.Sleep(2500); }
     }
 
     public Party GetPartyFor(Character character) => Heroes.Characters.Contains(character) ? Heroes : Monsters;

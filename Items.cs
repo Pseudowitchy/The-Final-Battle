@@ -33,13 +33,21 @@ class Grenade : IItem
     public string UseItem(Fight fight, Character character)
     {
         Random random = new();
+        List<Character> defeatedCharacters = new();
         string textHolder = "The grenade explodes at their feet!\r\n\r\n";
         foreach (Character _target in fight.GetEnemyPartyFor(character).Characters)
         {
             int damage = random.Next(4, 6);
             _target.Health -= damage;
-            textHolder += $"{_target.Name} takes {damage} points of damage!\r\n";
+            textHolder += $"{_target.Name} takes {damage} points of damage!\r\n\r\n";
+
+            if (_target.Health == 0) 
+            {
+                textHolder += $"{_target.Name} has been defeated!\r\n";
+                defeatedCharacters.Add(_target);
+            }
         }
+        foreach (Character _target in defeatedCharacters) { fight.GetPartyFor(_target).Characters.Remove(_target); }
         return textHolder;
     }
 }
